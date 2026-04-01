@@ -350,6 +350,10 @@ func processS3Event(ctx context.Context, ev *events.S3Event, pc Client, processi
 		}
 	}
 
+	// It should not send if batch has just been flushed
+	if batch.size == 0 {
+		return nil
+	}
 	err = pc.sendToPromtail(ctx, batch)
 	if err != nil {
 		return err
